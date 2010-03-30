@@ -1,0 +1,24 @@
+EAGLE LIZENZVEREINBARUNG
+
+Die folgende Lizenzvereinbarung zwischen der CadSoft Computer GmbH und Ihnen, dem Benutzer des Programms EAGLE, gilt als geschlossen, sobald Sie das Programm installiert haben.
+
+Nutzungsrecht
+
+Dem Käufer wird ein Nutzungsrecht für das Programm EAGLE (jedoch kein Eigentumsrecht) entsprechend dem Inhalt des User Labels und dem entsprechenden Eintrag im Programm übertragen. Das Nutzungsrecht beschränkt sich auf die im User-Label und im Programm eingetragene Person, Firma oder Institution. Das Recht der Vervielfältigung von Programm und zugehörigen Handbüchern verbleibt bei der CadSoft Computer GmbH. Eine Abänderung des Programms oder der Handbücher ist nicht gestattet.
+
+Freeware Lizenz
+
+Die "Freeware" Version von EAGLE ist beschränkt auf "non-profit" Anwendungen und auf die Programm-Evaluierung. "non-profit" bedeutet, sobald Sie durch die Verwendung von EAGLE Geld verdienen, müssen Sie das Programm registrieren! Dadurch ist jedem die Möglichkeit gegeben, EAGLE Light für seine privaten Zwecke zu verwenden. Ebenso können Schüler und Studenten diese Version für Ausbildungszwecke benutzen. Auch im kommerziellen Umfeld kann diese Version benutzt werden, solange es nur darum geht, die Tauglichkeit des Programms für den vorgesehenen Zweck zu testen. Sobald es aber für kommerzielle Zwecke eingesetzt wird, muß es registriert werden.
+Leiterplattenhersteller, die lediglich Produktionsdaten (z.B. Gerber-Dateien) von Board-Dateien erstellen wollen, die sie von EAGLE-Anwendern erhalten haben, können dies ebenfalls mit der Freeware Version tun.
+
+Garantie
+
+Die CadSoft Computer GmbH garantiert, daß alles von ihr gelieferte Material in einwandfreiem Zustand ist, und ersetzt defekte Lieferungen, falls innerhalb von 10 Tagen nach Erhalt berechtigte Gewährleistungs-Ansprüche beim Händler geltend gemacht werden.
+
+Haftung
+
+Eine Eignung des Vertragsgegenstandes für einen bestimmten Verwendungszweck wird nicht zugesichert. Eine Haftung des Lieferanten für Mangel-Folgeschäden ist ausgeschlossen.
+
+Vertragsende
+
+Ein Verstoß des Käufers gegen die Bestimmungen dieses Vertrages zieht die automatische und sofortige Beendigung des Nutzungsrechts nach sich, wobei der Käufer die an ihn gelieferten Programme und Handbücher an den Lieferanten zurückzugeben hat. Außerdem hat der Käufer sämtliche Kopien des Programms auf Datenträgern beliebiger Art nicht-rekonstruierbar zu löschen.
