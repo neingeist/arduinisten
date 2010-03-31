@@ -1,3 +1,6 @@
+// originally by Joby Taffey
+// http://chiphacker.com/questions/2057/polyphonic-sounds-from-a-microcontroller
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/delay.h>
