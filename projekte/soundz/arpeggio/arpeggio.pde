@@ -101,7 +101,6 @@ void arpeggio_play(int32_t note, uint32_t len) {
   _delay_us(50);
 }
   
-
 void arpeggio(int32_t n1, int32_t n2, int32_t n3, int32_t len) { 
   for (int32_t i = 0; i < len; i++) {
     arpeggio_play(n1, len);
@@ -109,7 +108,6 @@ void arpeggio(int32_t n1, int32_t n2, int32_t n3, int32_t len) {
     arpeggio_play(n3, len);
   }
 }
-
 
 int main(void) {
     /* setup clock divider. Timer0 overflows on counting to 256.
@@ -131,54 +129,51 @@ int main(void) {
     // enable interrupts
     sei();
     
-    
     for(;;) {
-    arpeggio(261,329,130,7);
-    arpeggio(329,392,130,4);
-    arpeggio(329,392,130,6);
-    arpeggio(329,392,123,6);
-    arpeggio(261,329,110,7);
-    arpeggio(329,392,110,4);
-    arpeggio(493,392,110,4);
-    arpeggio(523,440,110,4);
-    arpeggio(440,349,110,6);
-    arpeggio(293,246,146,7);
-    arpeggio(329,261,146,4);
-    arpeggio(349,293,146,6);
-    arpeggio(293,246,146,6);
-    arpeggio(246,196,99,7);
-    arpeggio(261,220,99,4);
-    arpeggio(293,246,99,6);
-    arpeggio(246,196,99,6);
-    arpeggio(261,329,130,7);
-    arpeggio(329,392,130,4);
-    arpeggio(329,392,130,6);
-    arpeggio(329,392,123,6);
-    arpeggio(262,329,110,7);
-    arpeggio(329,392,110,4);
-    arpeggio(493,392,110,4);
-    arpeggio(523,440,110,4);
-    arpeggio(440,349,110,6);
-    arpeggio(293,246,146,7);
-    arpeggio(329,261,146,4);
-    arpeggio(349,293,146,6);
-    arpeggio(246,196,99,6);
-    arpeggio(261,329,110,6);
-    arpeggio(261,329,110,6);
-    arpeggio(261,329,110,6);
-    arpeggio(246,196,99,6);
-    arpeggio(174,220,82,6);
-    arpeggio(174,220,82,6);
-    arpeggio(174,220,82,6);
-    arpeggio(246,196,99,6);
-    arpeggio(261,329,110,6);
-    arpeggio(261,329,110,6);
-    arpeggio(261,329,110,6);
-    arpeggio(261,329,110,6);
-    arpeggio(261,329,110,6);
-    arpeggio(261,329,110,6);
-    arpeggio(261,329,110,6);
-
-      
+        arpeggio(261,329,130,7);
+        arpeggio(329,392,130,4);
+        arpeggio(329,392,130,6);
+        arpeggio(329,392,123,6);
+        arpeggio(261,329,110,7);
+        arpeggio(329,392,110,4);
+        arpeggio(493,392,110,4);
+        arpeggio(523,440,110,4);
+        arpeggio(440,349,110,6);
+        arpeggio(293,246,146,7);
+        arpeggio(329,261,146,4);
+        arpeggio(349,293,146,6);
+        arpeggio(293,246,146,6);
+        arpeggio(246,196,99,7);
+        arpeggio(261,220,99,4);
+        arpeggio(293,246,99,6);
+        arpeggio(246,196,99,6);
+        arpeggio(261,329,130,7);
+        arpeggio(329,392,130,4);
+        arpeggio(329,392,130,6);
+        arpeggio(329,392,123,6);
+        arpeggio(262,329,110,7);
+        arpeggio(329,392,110,4);
+        arpeggio(493,392,110,4);
+        arpeggio(523,440,110,4);
+        arpeggio(440,349,110,6);
+        arpeggio(293,246,146,7);
+        arpeggio(329,261,146,4);
+        arpeggio(349,293,146,6);
+        arpeggio(246,196,99,6);
+        arpeggio(261,329,110,6);
+        arpeggio(261,329,110,6);
+        arpeggio(261,329,110,6);
+        arpeggio(246,196,99,6);
+        arpeggio(174,220,82,6);
+        arpeggio(174,220,82,6);
+        arpeggio(174,220,82,6);
+        arpeggio(246,196,99,6);
+        arpeggio(261,329,110,6);
+        arpeggio(261,329,110,6);
+        arpeggio(261,329,110,6);
+        arpeggio(261,329,110,6);
+        arpeggio(261,329,110,6);
+        arpeggio(261,329,110,6);
+        arpeggio(261,329,110,6);
     }
 }
