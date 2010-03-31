@@ -144,9 +144,7 @@ PROGMEM char porn[] =
 "                                                                 xx\r\n"
 "                                                                 xx\r\n"
 "\r\n"
-
 ;
-
 
 void setup() {
   int i;
@@ -227,7 +225,6 @@ void lpPorn(PGM_P string) {
     }
   }
 }
-
 
 void loop() {
   lpPorn(porn);
