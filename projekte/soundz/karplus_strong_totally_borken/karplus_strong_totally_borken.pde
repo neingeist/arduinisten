@@ -23,41 +23,10 @@ void setup() {
 
   // Set initial pulse width to the first sample.
   OCR2A = 0;
+
+  // DEBUG
+  Serial.begin(9600);
 }
-
-
-int play (uint16_t f, uint8_t T) {
-  sendKarplusStrongSound(f, T);
-}
-  
-  
-// http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1249193795
-int sendKarplusStrongSound(const uint16_t f /*Hz*/, const uint8_t T /*sec*/) {
-   const uint8_t N = 32;
-   const uint32_t sr = f * N; // sample rate: 800(25Hz)..47619(1488Hz)
-
-   int16_t buf[N];
-   for (uint8_t i=0; i<N; i++)
-     buf[i] = (int16_t) random(-32768,32767);
-   uint8_t bh = 0;
-
-   const int Tloop = 60; // or is it more?
-   const int dt = 16000000/sr - Tloop;
-   
-   for (uint32_t i=sr*T/2; i>0; i--) {
-	const int8_t v = (int8_t) (buf[bh] >> 8);
-
-	OCR2A = v;
-        _delay_us(dt); // or do something else for <dt> usecs
-        
-	uint8_t nbh = bh!=N-1 ? bh+1 : 0;
-	int32_t avg = buf[bh] + (int32_t)buf[nbh];
-	//avg = (avg << 10) - avg; // subtract avg more than once to get faster volume decrease
-        avg = (avg << 10) - avg -avg;
-	buf[bh] = avg >> 11; // no division, just shift
-	bh = nbh;
-   }
-} 
 
 // Frequencies (in Hz) of notes
 #define FSH_4 370
@@ -71,6 +40,81 @@ int sendKarplusStrongSound(const uint16_t f /*Hz*/, const uint8_t T /*sec*/) {
 #define GSH_4 415
 
 #define REST 0
+
+
+int play (uint16_t f, uint8_t T) {
+  #define MAGIC_TUNE_FAC 3
+  if (f == REST) {
+    _delay_ms(T*1000/16*MAGIC_TUNE_FAC);
+  } else {
+    sendKarplusStrongSound(f, T*MAGIC_TUNE_FAC);
+  }
+}
+  
+  
+// http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1249193795
+int sendKarplusStrongSound(uint16_t f /*Hz*/, uint8_t T /* 1/16 sec*/) {
+   uint32_t sr = 11025;
+   uint8_t N = sr/f;
+   //uint8_t N=32;
+   //uint32_t sr = (uint32_t) N*f;
+
+   Serial.print("N = ");
+   Serial.print(N, DEC);
+   Serial.println();
+
+   unsigned long millis_alt = millis();
+
+   int buf[N];
+   for (uint8_t i=0; i<N; i++)
+     buf[i] = random(65536);
+   uint8_t bh = 0;
+
+   int Tloop = 18
+   ; // FIXME: tune
+   int dt = (1000000ul)/sr - Tloop;
+   Serial.print("dt = ");
+   Serial.print(dt, DEC);
+   Serial.println();
+   
+   for (uint32_t i=sr*T/16; i>0; i--) {
+        // current amplitude to play is the highest byte of buf[bh]	
+        #if 1
+	OCR2A = buf[bh] >> 8;
+        #else
+        OCR2A = buf[bh];
+        #endif
+
+        // delay or do something else for <dt> usecs
+        _delay_us(dt); 
+        
+        // calculate avg between current buf[bh] and next sample buf[nbh]
+        uint8_t nbh;
+        if (bh < N-1) {
+          nbh = bh + 1;
+        } else {
+          nbh = 0;
+        }
+        
+        // calculate avg 
+	unsigned long avg = ((unsigned long) buf[bh] + (unsigned long) buf[nbh])/2;
+        // with gain<1 (1020/1024 ~ 0.996)
+        avg *= 1020;
+        avg /= 1024;
+
+        // put back in buffer
+	buf[bh] = (int) avg;        
+	bh = nbh;
+   }
+   
+   Serial.print("T_real = ");
+   Serial.print(millis() - millis_alt, DEC);
+   Serial.print(", T/16 = ");
+   Serial.print(T*1000/16, DEC);
+   Serial.println();
+} 
+
+
 
 void loop() {
     // Axel F
@@ -100,5 +144,4 @@ void loop() {
     play(GSH_4, 2);
     play(FSH_4, 6);
     play(REST, 12);
-    delay(100);
 }
