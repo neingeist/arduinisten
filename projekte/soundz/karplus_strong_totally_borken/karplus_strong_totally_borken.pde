@@ -43,24 +43,27 @@ void setup() {
 
 
 int play (uint16_t f, uint8_t T) {
-  #define MAGIC_TUNE_FAC 3
+  #define DIVIDER 32
+  #define MAGIC_TUNE_FAC 6
   if (f == REST) {
-    _delay_ms(T*1000/16*MAGIC_TUNE_FAC);
+    _delay_ms(T*1000/DIVIDER*MAGIC_TUNE_FAC);
   } else {
     sendKarplusStrongSound(f, T*MAGIC_TUNE_FAC);
   }
 }
   
   
-// http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1249193795
-int sendKarplusStrongSound(uint16_t f /*Hz*/, uint8_t T /* 1/16 sec*/) {
-   uint32_t sr = 11025;
+// original source from http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1249193795
+int sendKarplusStrongSound(uint16_t f /*Hz*/, uint8_t T /* 1/DIVIDER sec*/) {
+   uint16_t sr = 22050;
    uint8_t N = sr/f;
-   //uint8_t N=32;
-   //uint32_t sr = (uint32_t) N*f;
+   // uint8_t N = 32;
+   // uint16_t sr = (uint16_t) N*f;
 
    Serial.print("N = ");
    Serial.print(N, DEC);
+   Serial.print("sr = ");
+   Serial.print(sr, DEC);
    Serial.println();
 
    unsigned long millis_alt = millis();
@@ -70,19 +73,18 @@ int sendKarplusStrongSound(uint16_t f /*Hz*/, uint8_t T /* 1/16 sec*/) {
      buf[i] = random(65536);
    uint8_t bh = 0;
 
-   int Tloop = 18
-   ; // FIXME: tune
+   int Tloop = 18; // FIXME: tune
    int dt = (1000000ul)/sr - Tloop;
    Serial.print("dt = ");
    Serial.print(dt, DEC);
    Serial.println();
    
-   for (uint32_t i=sr*T/16; i>0; i--) {
+   for (uint32_t i=(uint32_t) sr*T/DIVIDER; i>0; i--) {
         // current amplitude to play is the highest byte of buf[bh]	
-        #if 1
-	OCR2A = buf[bh] >> 8;
+        #if NOISEINDUSTRIAL
+	OCR2A = buf[bh];
         #else
-        OCR2A = buf[bh];
+        OCR2A = buf[bh] >> 8;
         #endif
 
         // delay or do something else for <dt> usecs
@@ -97,13 +99,13 @@ int sendKarplusStrongSound(uint16_t f /*Hz*/, uint8_t T /* 1/16 sec*/) {
         }
         
         // calculate avg 
-	unsigned long avg = ((unsigned long) buf[bh] + (unsigned long) buf[nbh])/2;
+	uint32_t avg = ((uint32_t) buf[bh] + (uint32_t) buf[nbh])/2;
         // with gain<1 (1020/1024 ~ 0.996)
         avg *= 1020;
         avg /= 1024;
 
         // put back in buffer
-	buf[bh] = (int) avg;        
+	buf[bh] = (uint16_t) avg;        
 	bh = nbh;
    }
    
