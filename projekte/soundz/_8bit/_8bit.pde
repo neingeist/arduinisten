@@ -1,7 +1,11 @@
 /*
+ * 8 bit counter melody
+ *
+ * idea from http://www.youtube.com/watch?v=hXgb8Y20aIk / http://eightbitsquare.ytmnd.com/
+ *
  * Soundcode von: Michael Smith <michael@hurts.ca> - http://www.arduino.cc/playground/Code/PCMAudio
- * CapSense: http://www.arduino.cc/playground/Main/CapSense
  * basierend auf code von Alex Wenger 2009 ("Arduino Physical Computing ...")
+ *
  */
 #include <stdint.h>
 #include <avr/interrupt.h>
@@ -35,29 +39,26 @@ const unsigned char sintab[] PROGMEM = {
 };
 
 
-volatile uint16_t sample1;   // welches ist das nächste Sample aus der Sinustabelle
+volatile uint16_t sample[8];   // welches ist das nächste Sample aus der Sinustabelle
 // die oberen 7 bit zeigen in die Tabelle, die restlichen 
 // bits sind kommastellen
-volatile uint16_t sample2;
-volatile uint16_t sample3;
 
 uint16_t vol;               // aktuelle Lautstärke
 volatile uint16_t set_vol;  // gewuenschte Lautstärke
-volatile uint16_t tone1;     // Tonhöhe in "Inkrementiereinheiten"
-volatile uint16_t tone2;     // Tonhöhe in "Inkrementiereinheiten"
-volatile uint16_t tone3;     // Tonhöhe in "Inkrementiereinheiten"
-
+volatile uint16_t tone_[8];     // Tonhöhe in "Inkrementiereinheiten"
 
 // Interruptroutine, diese wird 8000 mal pro Sekunde aufgerufen und berechnet den nächsten
 // Wert für die Tonausgabe
 ISR(TIMER1_COMPA_vect) {
   static int timer1counter;      // Zähler um Lautstärkeänderung langsamer zu machen
-  int wert;
+  int wert = 0;
 
   // Wert an der Stelle sample1/512 aus der sinus-Tabelle lesen
-  wert = pgm_read_byte(&sintab[(sample1 >> 9)])+
-         pgm_read_byte(&sintab[(sample2 >> 9)])+
-         pgm_read_byte(&sintab[(sample3 >> 9)]);
+  for(int i=0; i<8; i++) {
+    wert += pgm_read_byte(&sintab[(sample[i] >> 9)]);
+  };
+  wert/=8;
+  
   // Wert mit der aktuellen Lautstärke multiplizieren
   wert = (wert * vol) / 256; 
   // PWM Hardware anweisen ab jetzt diesen Wert auszugeben
@@ -65,9 +66,9 @@ ISR(TIMER1_COMPA_vect) {
 
   // nächstes Sample in der Sinustabelle abhängig vom gewünschten
   // Ton auswählen.
-  sample1 += tone1;                
-  sample2 += tone2;                
-  sample3 += tone3;                
+  for(int i=0; i<8; i++) {
+    sample[i] += tone_[i];
+  };
 
   // Lautstärke anpassen wen gewünscht (nur alle 50 Interrupts, damit
   // es schön langsam passiert.
@@ -122,23 +123,12 @@ void startPlayback()
   TIMSK1 |= _BV(OCIE1A);
 
   // Startwerte
-  sample1 = 0;                
-  sample2 = 0;                
-  sample3 = 0;                
+  for(int i=0; i<8; i++) {
+    sample[i] = 0;
+  }   
 
   // Global Interrupts wieder einschalten.
   sei();
-}
-
-// Aendert Ton und Lautstärke
-// ton (50-4000Hz)
-// volume (0-256);
-void SetFreq(int ton1,int ton2, int ton3, int volume)
-{
-  tone1 = (128ul*512ul*ton1)/8000;
-  tone2 = (128ul*512ul*ton2)/8000;
-  tone3 = (128ul*512ul*ton3)/8000;
-  set_vol  = volume;
 }
 
 void setup()                    
@@ -149,15 +139,17 @@ void setup()
 #include "pitches.h"
 void loop()                    
 {
-   for(int counter = 0; counter<256; counter++) {
-     SetFreq((counter & _BV(0))?(NOTE_C4):0,
-             (counter & _BV(1))?(NOTE_A3):0,
-             (counter & _BV(2))?(NOTE_F3):0,
-             80);
-     if ((counter % 8) != 0) {
-        _delay_ms(500);
-     }
+   set_vol = 80;
+
+   for(int counter = 1; counter<256; counter++) {
+     #define BLA ((128ul*512ul)/8000)
+     tone_[0] = (counter & _BV(0))?(NOTE_C4*BLA):0;  
+     tone_[1] = (counter & _BV(1))?(NOTE_A3*BLA):0;
+     tone_[2] = (counter & _BV(2))?(NOTE_F3*BLA):0;
+     tone_[3] = (counter & _BV(2))?(NOTE_D3*BLA):0; 
+     tone_[4] = (counter & _BV(2))?(NOTE_B2*BLA):0;
+     tone_[5] = (counter & _BV(2))?(NOTE_G2*BLA):0;
+     tone_[6] = (counter & _BV(2))?(NOTE_E2*BLA):0;
+     tone_[7] = (counter & _BV(2))?(NOTE_C2*BLA):0;
    }     
 }
-
-
