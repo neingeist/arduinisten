@@ -81,6 +81,7 @@ int sendKarplusStrongSound(uint16_t f /*Hz*/, uint8_t T /* 1/DIVIDER sec*/) {
    
    for (uint32_t i=(uint32_t) sr*T/DIVIDER; i>0; i--) {
         // current amplitude to play is the highest byte of buf[bh]	
+        #define NOISEINDUSTRIAL 1
         #if NOISEINDUSTRIAL
 	OCR2A = buf[bh];
         #else
