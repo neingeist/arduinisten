@@ -38,10 +38,12 @@ const unsigned char sintab[] PROGMEM = {
   0x09,0x07,0x05,0x03,0x02,0x01,0x01,0x01
 };
 
-
-volatile uint16_t sample[8];   // welches ist das nächste Sample aus der Sinustabelle
+// welches ist das nächste Sample aus der Sinustabelle
 // die oberen 7 bit zeigen in die Tabelle, die restlichen 
 // bits sind kommastellen
+volatile uint16_t sample[8];   
+
+volatile uint8_t instrument[8]; 
 
 uint16_t vol;               // aktuelle Lautstärke
 volatile uint16_t set_vol;  // gewuenschte Lautstärke
@@ -51,13 +53,32 @@ volatile uint16_t tone_[8];     // Tonhöhe in "Inkrementiereinheiten"
 // Wert für die Tonausgabe
 ISR(TIMER1_COMPA_vect) {
   static int timer1counter;      // Zähler um Lautstärkeänderung langsamer zu machen
+
   int wert = 0;
+  uint8_t scale = 0;
 
   // Wert an der Stelle sample1/512 aus der sinus-Tabelle lesen
-  for(int i=0; i<8; i++) {
-    wert += pgm_read_byte(&sintab[(sample[i] >> 9)]);
+  for(uint8_t i=0; i<8; i++) {
+    if (tone_[i] != 0) {
+      
+      uint8_t index = sample[i] >> 9; // 0-127
+      if (instrument[i] == 0) {
+        wert += pgm_read_byte(&sintab[index]);
+      } else if (instrument[i] == 1) {
+        wert += index*2;
+      } else if (instrument[i] == 2) {
+        if (index < 64) {
+          wert += 0xff;
+        }
+      }      
+
+      scale++;
+    }
   };
-  wert/=8;
+  if (scale != 0) {
+    // wert/=scale;
+    wert/=4;
+  }
   
   // Wert mit der aktuellen Lautstärke multiplizieren
   wert = (wert * vol) / 256; 
@@ -66,7 +87,7 @@ ISR(TIMER1_COMPA_vect) {
 
   // nächstes Sample in der Sinustabelle abhängig vom gewünschten
   // Ton auswählen.
-  for(int i=0; i<8; i++) {
+  for(uint8_t i=0; i<8; i++) {
     sample[i] += tone_[i];
   };
 
@@ -79,6 +100,7 @@ ISR(TIMER1_COMPA_vect) {
     if (vol < set_vol) vol++;
     if (vol > set_vol) vol--;
   }
+
 }
 
 void startPlayback()
@@ -123,8 +145,9 @@ void startPlayback()
   TIMSK1 |= _BV(OCIE1A);
 
   // Startwerte
-  for(int i=0; i<8; i++) {
+  for(uint8_t i=0; i<8; i++) {
     sample[i] = 0;
+    tone_[i] = 0;
   }   
 
   // Global Interrupts wieder einschalten.
@@ -133,23 +156,52 @@ void startPlayback()
 
 void setup()                    
 {
+  Serial.begin(9600);
   startPlayback();
 }
 
 #include "pitches.h"
 void loop()                    
 {
-   set_vol = 80;
+   set_vol = 128;
+   
+   #define BLA(t) (2*(128ul*512ul*(t))/8000)
 
-   for(int counter = 1; counter<256; counter++) {
-     #define BLA ((128ul*512ul)/8000)
-     tone_[0] = (counter & _BV(0))?(NOTE_C4*BLA):0;  
-     tone_[1] = (counter & _BV(1))?(NOTE_A3*BLA):0;
-     tone_[2] = (counter & _BV(2))?(NOTE_F3*BLA):0;
-     tone_[3] = (counter & _BV(2))?(NOTE_D3*BLA):0; 
-     tone_[4] = (counter & _BV(2))?(NOTE_B2*BLA):0;
-     tone_[5] = (counter & _BV(2))?(NOTE_G2*BLA):0;
-     tone_[6] = (counter & _BV(2))?(NOTE_E2*BLA):0;
-     tone_[7] = (counter & _BV(2))?(NOTE_C2*BLA):0;
+   instrument[0] = 2;
+   instrument[1] = 2;
+   instrument[2] = 0;
+   instrument[3] = 0;
+   instrument[4] = 0;
+   instrument[5] = 1;
+   instrument[6] = 1;
+   instrument[7] = 1;
+
+   
+   for(int counter = 0; counter<256; counter++) {
+     Serial.println(counter, BIN);
+     
+     tone_[0] = (counter & _BV(0))?BLA(NOTE_C4):0;  
+     tone_[1] = (counter & _BV(1))?BLA(NOTE_A3):0;
+     tone_[2] = (counter & _BV(2))?BLA(NOTE_F3):0;
+     tone_[3] = (counter & _BV(3))?BLA(NOTE_D3):0; 
+     tone_[4] = (counter & _BV(4))?BLA(NOTE_B2):0;
+     tone_[5] = (counter & _BV(5))?BLA(NOTE_G2):0;
+     tone_[6] = (counter & _BV(6))?BLA(NOTE_E2):0;
+     tone_[7] = (counter & _BV(7))?BLA(NOTE_C2):0;
+     
+     _delay_ms(200);
    }     
+   
+   // fading away...
+   if (set_vol>0) {
+     set_vol--;
+   }
+   
+   /* test code */
+   /*
+   tone_[0] = BLA(NOTE_C4);
+   _delay_ms(500);
+   tone_[0] = BLA(NOTE_C2);
+   _delay_ms(500);
+   */
 }
