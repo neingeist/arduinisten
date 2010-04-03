@@ -1,3 +1,5 @@
+/* based on example-small.c in the protothreads tarball */
+
 #include "avr/io.h"
 #include "util/delay.h"
 
