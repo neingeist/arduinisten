@@ -5,8 +5,12 @@
 #include "timer/clock.h"
 #include "timer/timer.h"
 
-/* Two flags that the two protothread functions use. */
-static int protothread1_flag, protothread2_flag;
+/* TIME_DELAY macro for convenience */
+#define TIMER_DELAY(pt, timer, t) \
+  do { \
+  timer_set(&timer, t); \
+  PT_WAIT_UNTIL(pt, timer_expired(&timer)); \
+  } while(0);
 
 /* Two timers for the two protothreads. */
 static struct timer timer1, timer2;
@@ -20,20 +24,10 @@ protothread1(struct pt *pt)
 
   /* We loop forever here. */
   while(1) {
-    /* Wait until the other protothread has set its flag. */
-    PT_WAIT_UNTIL(pt, protothread2_flag != 0);
-
     PORTB |= _BV(PB3);
-    timer_set(&timer1, CLOCK_SECOND/2);
-    PT_WAIT_UNTIL(pt, timer_expired(&timer1));
+    TIMER_DELAY(pt, timer1, 20);
     PORTB &= ~_BV(PB3);
-    timer_set(&timer1, CLOCK_SECOND/2);
-    PT_WAIT_UNTIL(pt, timer_expired(&timer1));
-
-    /* We then reset the other protothread's flag, and set our own
-       flag so that the other protothread can run. */
-    protothread2_flag = 0;
-    protothread1_flag = 1;
+    TIMER_DELAY(pt, timer1, 20);
 
     /* And we loop. */
   }
@@ -52,24 +46,10 @@ protothread2(struct pt *pt)
 
   /* We loop forever here. */
   while(1) {
-    /* Let the other protothread run. */
-    protothread2_flag = 1;
-
-    /* Wait until the other protothread has set its flag. */
-    PT_WAIT_UNTIL(pt, protothread1_flag != 0);
-
     PORTB |= _BV(PB2);
-    timer_set(&timer2, CLOCK_SECOND/2);
-    PT_WAIT_UNTIL(pt, timer_expired(&timer2));
+    TIMER_DELAY(pt, timer2, 60);
     PORTB &= ~_BV(PB2);
-    timer_set(&timer2, CLOCK_SECOND/2);
-    PT_WAIT_UNTIL(pt, timer_expired(&timer2));
-
-
-    /* We then reset the other protothread's flag, and set our own
-       flag so that the other protothread can run. */
-    protothread1_flag = 0;
-    protothread2_flag = 1;
+    TIMER_DELAY(pt, timer2, 60);
 
     /* And we loop. */
   }
