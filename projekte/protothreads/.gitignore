@@ -3,6 +3,7 @@
 *.hex
 *.lss
 *.map
+*.o
 *.sym
 obj/
 .dep/
