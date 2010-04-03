@@ -73,7 +73,7 @@ protothread2(struct pt *pt)
 
 static struct pt pt1, pt2;
 
-int main() {
+int main(void) {
   // pin 11 = PB3
   DDRB |= _BV(PB3);
   // pin 10 = PB2
