@@ -19,7 +19,7 @@ static int
 protothread1(struct pt *pt)
 {
   /* A protothread function must begin with PT_BEGIN() which takes a
- *      pointer to a struct pt. */
+     pointer to a struct pt. */
   PT_BEGIN(pt);
 
   /* We loop forever here. */
@@ -33,7 +33,7 @@ protothread1(struct pt *pt)
   }
 
   /* All protothread functions must end with PT_END() which takes a
- *      pointer to a struct pt. */
+     pointer to a struct pt. */
   PT_END(pt);
 }
 
@@ -55,7 +55,7 @@ protothread2(struct pt *pt)
   }
 
   /* All protothread functions must end with PT_END() which takes a
- *      pointer to a struct pt. */
+     pointer to a struct pt. */
   PT_END(pt);
 }
 
