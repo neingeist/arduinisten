@@ -5,7 +5,7 @@
 #include "timer/clock.h"
 #include "timer/timer.h"
 
-/* TIME_DELAY macro for convenience */
+/* TIMER_DELAY macro for convenience */
 #define TIMER_DELAY(pt, timer, t) \
   do { \
   timer_set(&timer, t); \
