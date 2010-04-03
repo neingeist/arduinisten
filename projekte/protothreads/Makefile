@@ -9,7 +9,7 @@ MCU = atmega168
 F_CPU = 16000000
 FORMAT = ihex
 TARGET = example
-SRC = example.c
+SRC = example.c timer/clock-arch.c timer/timer.c
 ASRC = 
 OPT = s
 
@@ -32,7 +32,7 @@ CSTANDARD = -std=gnu99
 CDEFS = -DF_CPU=$(F_CPU)UL
 
 # Place -I options here
-CINCS = -Ipt
+CINCS = -Ipt 
 
 
 CDEBUG = -g$(DEBUG)

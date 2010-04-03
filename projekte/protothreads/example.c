@@ -2,9 +2,14 @@
 #include "util/delay.h"
 
 #include "pt.h"
+#include "timer/clock.h"
+#include "timer/timer.h"
 
 /* Two flags that the two protothread functions use. */
 static int protothread1_flag, protothread2_flag;
+
+/* Two timers for the two protothreads. */
+static struct timer timer1, timer2;
 
 static int
 protothread1(struct pt *pt)
@@ -19,10 +24,11 @@ protothread1(struct pt *pt)
     PT_WAIT_UNTIL(pt, protothread2_flag != 0);
 
     PORTB |= _BV(PB3);
-    _delay_ms(200);
+    timer_set(&timer1, CLOCK_SECOND/2);
+    PT_WAIT_UNTIL(pt, timer_expired(&timer1));
     PORTB &= ~_BV(PB3);
-    _delay_ms(200);
-
+    timer_set(&timer1, CLOCK_SECOND/2);
+    PT_WAIT_UNTIL(pt, timer_expired(&timer1));
 
     /* We then reset the other protothread's flag, and set our own
        flag so that the other protothread can run. */
@@ -53,9 +59,11 @@ protothread2(struct pt *pt)
     PT_WAIT_UNTIL(pt, protothread1_flag != 0);
 
     PORTB |= _BV(PB2);
-    _delay_ms(100);
+    timer_set(&timer2, CLOCK_SECOND/2);
+    PT_WAIT_UNTIL(pt, timer_expired(&timer2));
     PORTB &= ~_BV(PB2);
-    _delay_ms(100);
+    timer_set(&timer2, CLOCK_SECOND/2);
+    PT_WAIT_UNTIL(pt, timer_expired(&timer2));
 
 
     /* We then reset the other protothread's flag, and set our own
@@ -78,6 +86,9 @@ int main(void) {
   DDRB |= _BV(PB3);
   // pin 10 = PB2
   DDRB |= _BV(PB2);
+
+  /* Initialize clock */
+  clock_init();
 
   /* Initialize the protothread state variables with PT_INIT(). */
   PT_INIT(&pt1);
