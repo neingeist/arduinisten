@@ -12,7 +12,7 @@
   do { \
   timer_set(&timer, t); \
   PT_WAIT_UNTIL(pt, timer_expired(&timer)); \
-  } while(0);
+  } while(0)
 
 /* Two timers for the two protothreads. */
 static struct timer timer1, timer2;
