@@ -83,8 +83,8 @@ LDFLAGS = $(EXTMEMOPTS) $(LDMAP) $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 
 # Programming support using avrdude. Settings and variables.
 
-AVRDUDE_PROGRAMMER = stk500
-AVRDUDE_PORT = usb
+AVRDUDE_PROGRAMMER = stk500v1 
+AVRDUDE_PORT = /dev/ttyUSB0
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
@@ -105,7 +105,7 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_VERBOSE = -v -v
 
 AVRDUDE_BASIC = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
-AVRDUDE_FLAGS = $(AVRDUDE_BASIC) $(AVRDUDE_NO_VERIFY) $(AVRDUDE_VERBOSE) $(AVRDUDE_ERASE_COUNTER)
+AVRDUDE_FLAGS = $(AVRDUDE_BASIC) $(AVRDUDE_NO_VERIFY) $(AVRDUDE_VERBOSE) $(AVRDUDE_ERASE_COUNTER) -b19200
 
 
 CC = avr-gcc
@@ -113,7 +113,8 @@ OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
 SIZE = avr-size
 NM = avr-nm
-AVRDUDE = avrdude
+#AVRDUDE = avrdude
+AVRDUDE = /home/entropia/Desktop/arduinisten/arduino-0018-linux-x64/hardware/tools/avrdude -C/home/entropia/Desktop/arduinisten/arduino-0018-linux-x64/hardware/tools/avrdude.conf
 REMOVE = rm -f
 MV = mv -f
 
@@ -140,9 +141,12 @@ eep: $(TARGET).eep
 lss: $(TARGET).lss 
 sym: $(TARGET).sym
 
+# Reset Arduino
+program-reset:
+	perl -MDevice::SerialPort -e "Device::SerialPort->new('$(AVRDUDE_PORT)')->pulse_dtr_on(100);"
 
 # Program the device.  
-program: $(TARGET).hex $(TARGET).eep
+program: $(TARGET).hex $(TARGET).eep program-reset
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
 
 
