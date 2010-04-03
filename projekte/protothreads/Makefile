@@ -32,7 +32,7 @@ CSTANDARD = -std=gnu99
 CDEFS = -DF_CPU=$(F_CPU)UL
 
 # Place -I options here
-CINCS = -Ipt 
+CINCS = -Ipt -Itimer
 
 
 CDEBUG = -g$(DEBUG)

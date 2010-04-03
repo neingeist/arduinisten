@@ -4,8 +4,8 @@
 #include "util/delay.h"
 
 #include "pt.h"
-#include "timer/clock.h"
-#include "timer/timer.h"
+#include "clock.h"
+#include "timer.h"
 
 /* TIMER_DELAY macro for convenience */
 #define TIMER_DELAY(pt, timer, t) \

@@ -45,8 +45,8 @@
  * $Id: timer.c,v 1.2 2006/06/12 08:00:30 adam Exp $
  */
 
-#include "timer/clock.h"
-#include "timer/timer.h"
+#include "clock.h"
+#include "timer.h"
 
 /*---------------------------------------------------------------------------*/
 /**
