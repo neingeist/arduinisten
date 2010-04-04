@@ -7,12 +7,12 @@
 #include "timer/clock.h"
 #include "timer/timer.h"
 
-/* TIMER_DELAY macro for convenience */
+/* TIMER_DELAY macro for convenience, do { } while(0) is just a macro trick */
 #define TIMER_DELAY(pt, timer, t) \
   do { \
   timer_set(&timer, t); \
   PT_WAIT_UNTIL(pt, timer_expired(&timer)); \
-  } while(0);
+  } while(0)
 
 /* Two timers for the two protothreads. */
 static struct timer timer1, timer2;
