@@ -93,12 +93,12 @@ void arpeggio_play(int32_t note, uint32_t len) {
   // clock tick is 1s/18.2 == 54ms
   #define MAGIC_CLOCK_TICK 54
   #define MAGIC_DELAY_FACTOR 400 // well, should be 1000 us?!
-  #define MAGIC_BREATH 50
   _delay_us(MAGIC_DELAY_FACTOR*(len*MAGIC_CLOCK_TICK/10));
     
   // breath
   curNote=REST;
-  _delay_us(50);
+  #define MAGIC_BREATH 50
+  _delay_us(MAGIC_BREATH);
 }
   
 void arpeggio(int32_t n1, int32_t n2, int32_t n3, int32_t len) { 
