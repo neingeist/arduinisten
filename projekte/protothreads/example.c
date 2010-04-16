@@ -7,7 +7,7 @@
 #include "clock.h"
 #include "timer.h"
 
-/* TIMER_DELAY macro for convenience */
+/* TIMER_DELAY macro for convenience, do { } while(0) is just a macro trick */
 #define TIMER_DELAY(pt, timer, t) \
   do { \
   timer_set(&timer, t); \
